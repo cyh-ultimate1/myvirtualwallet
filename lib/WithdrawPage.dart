@@ -22,7 +22,7 @@ class WithdrawPage extends StatefulWidget {
 
 class _MyPageState extends State<WithdrawPage> with InputValidationMixin {
   //variables
-  var loggedInUser = storage.read(key: "loggedInUser");
+  //var loggedInUser = storage.read(key: "loggedInUser");
   var _formKey = new GlobalKey<FormState>();
   var _autoValidateMode = AutovalidateMode.always;
   final TextEditingController _withdrawAmountController =
@@ -84,7 +84,7 @@ class _MyPageState extends State<WithdrawPage> with InputValidationMixin {
                           child: Text("OK"),
                           onPressed: () async {
                             Navigator.pop(context);
-                            await Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
+                            await Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomePage()), (r) => false);
                           },
                         ),
                       ]);
@@ -102,11 +102,10 @@ mixin InputValidationMixin {
   bool isPasswordValid(String password) => password.length == 6;
 
   bool isCurrencyValid(String? input) {
-    int? output = null;
     if (input == null) {
       return false;
     }
-    output = int.tryParse(input);
+    int? output = int.tryParse(input);
     return output != null;
   }
 }

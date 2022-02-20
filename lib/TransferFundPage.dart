@@ -21,7 +21,6 @@ class TransferFundPage extends StatefulWidget {
 
 class _MyPageState extends State<TransferFundPage>{
   //variables
-  var loggedInUser = storage.read(key: "loggedInUser");
   var _formKey = new GlobalKey<FormState>();
   var _autoValidateMode = AutovalidateMode.always;
   final TextEditingController _depositAmountController = TextEditingController();
@@ -121,7 +120,7 @@ class _MyPageState extends State<TransferFundPage>{
                           child: Text("OK"),
                           onPressed: () async {
                             Navigator.pop(context);
-                            await Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomePage()));
+                            await Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => HomePage()), (r) => false);
                           },
                         ),
                       ]);
