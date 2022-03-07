@@ -99,8 +99,6 @@ class _MyPageState extends State<WithdrawPage> with InputValidationMixin {
 }
 
 mixin InputValidationMixin {
-  bool isPasswordValid(String password) => password.length == 6;
-
   bool isCurrencyValid(String? input) {
     if (input == null) {
       return false;

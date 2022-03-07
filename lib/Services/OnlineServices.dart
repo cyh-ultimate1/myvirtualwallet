@@ -100,4 +100,14 @@ class OnlineService{
         "Authorization": 'Bearer ' + jwtToken.toString().replaceAll('"', '')},
     );
   }
+
+  static Future<http.Response> getChatUsers() async{
+    return await http.get(
+      Uri.parse(GlobalConstants.CHATSERVER_URL + "users"),
+      headers: {
+        "Accept": "application/json",
+        "content-type": "application/json",
+      },
+    );
+  }
 }

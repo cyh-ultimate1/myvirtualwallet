@@ -7,7 +7,6 @@ import 'package:myvirtualwallet/HomePage.dart';
 import 'package:myvirtualwallet/constants.dart';
 
 import 'Helpers.dart';
-import 'ResponseModel.dart';
 import 'Services/OnlineServices.dart';
 import 'customWidgets.dart';
 
@@ -101,8 +100,6 @@ class _MyPageState extends State<DepositPage> with InputValidationMixin {
 }
 
 mixin InputValidationMixin {
-  bool isPasswordValid(String password) => password.length == 6;
-
   bool isCurrencyValid(String? input) {
     if (input == null) {
       return false;

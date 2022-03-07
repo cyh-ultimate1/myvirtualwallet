@@ -4,17 +4,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:myvirtualwallet/customWidgets.dart';
 
+import 'DatabaseLite/DatabaseHelper.dart';
 import 'HomePage.dart';
-import 'LoginPage.dart';
 import 'ResponseModel.dart';
 import 'Services/OnlineServices.dart';
 import 'constants.dart';
 
+final storage = FlutterSecureStorage();
+
 void main() {
   runApp(MyApp());
 }
-
-final storage = FlutterSecureStorage();
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -38,44 +38,11 @@ class MyHomePage extends StatefulWidget {
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
-/*
-class _MyHomePageState extends State<MyHomePage> {
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            ElevatedButton(
-                onPressed: (){
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => LoginPage()),
-                  );
-                },
-                child: Text('Login')
-            )
-          ],
-        ),
-      ),
-    );
-  }
-}
-*/
 
 class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final dbHelper = DatabaseHelper.instance;
 
   Future<String> login(String username, String password) async {
     var res = await OnlineService.loginUser(username, password);
@@ -85,6 +52,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
       storage.write(key: "jwt", value: loginResponse.token);
       storage.write(key: GlobalConstants.storageKeyLoggedInUserID, value: loginResponse.userID);
+      var count = await dbHelper.queryRowCount();
+      if(count  == 0 && loginResponse.userName.isNotEmpty){
+        dbHelper.insert({
+          DatabaseHelper.loggedInUserTableId   : 1,
+          DatabaseHelper.loggedInUserTableUsername : loginResponse.userName,
+        });
+      }else{
+        dbHelper.update({
+          DatabaseHelper.loggedInUserTableId   : 1,
+          DatabaseHelper.loggedInUserTableUsername : loginResponse.userName,
+        });
+      }
 
       return loginResponse.token;
     }
@@ -101,6 +80,25 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
   );
 
+  late bool isLoggedIn = false;
+  String? something = "";
+  Future<void> updateIsLoggedIn() async{
+    var haveKey = await storage.containsKey(key: GlobalConstants.storageKeyLoggedInUserID);
+    isLoggedIn = haveKey;
+  }
+
+  @override
+  void initState() {
+
+    init();
+    super.initState();
+  }
+
+  Future<void> init() async {
+    await updateIsLoggedIn();
+    //setState(() { });
+  }
+
   @override
   Widget build(BuildContext context) {
     // This method is rerun every time setState is called, for instance as done
@@ -109,7 +107,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
+    return isLoggedIn
+        ? HomePage()
+        : Scaffold(
       body: SingleChildScrollView(
               child: Container(
                 height: MediaQuery.of(context).size.height,
@@ -172,13 +172,12 @@ class _MyHomePageState extends State<MyHomePage> {
                                 var password = _passwordController.text;
                                 var jwt = await login(username, password);
                                 if(jwt.isNotEmpty) {
-
-                                  //displayDialog(context, "this is response body value: ", jwt);
-                                  Navigator.push(
+                                  Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
                                           builder: (context) => HomePage()
                                       )
+                                      , (r) => false
                                   );
                                 }
                                 else {
@@ -203,6 +202,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               )
           )
+    );
+  }
+
+  Widget _buildWaitingScreen() {
+    return Scaffold(
+      body: Container(
+        alignment: Alignment.center,
+        child: CircularProgressIndicator(),
+      ),
     );
   }
 }

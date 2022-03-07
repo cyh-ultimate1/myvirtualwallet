@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:myvirtualwallet/ChatListPage.dart';
 import 'package:myvirtualwallet/Helpers.dart';
 import 'package:myvirtualwallet/Models/AccountDetails.dart';
 import 'package:myvirtualwallet/Models/AccountTransaction.dart';
@@ -11,9 +12,11 @@ import 'package:myvirtualwallet/TestPage.dart';
 import 'package:myvirtualwallet/WithdrawPage.dart';
 import 'package:myvirtualwallet/constants.dart';
 import 'package:sliding_up_panel/sliding_up_panel.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import 'DepositPage.dart';
 import 'Services/OnlineServices.dart';
+import 'TestWebsocket.dart';
 import 'TransferFundPage.dart';
 import 'customWidgets.dart';
 
@@ -170,6 +173,16 @@ class _MyPageState extends State<HomePage> {
                                   builder: (context) => TestPage()),
                             );
                           }),*/
+                          customWidgets.elevatedButtonHomepageWithIcon(
+                              "Chat", Icons.chat_bubble,
+                                  () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ChatListPage()),
+                                );
+                              }),
+                          customWidgets.emptyHorizontalSpace(),
                         ],
                       ),
                     ),
