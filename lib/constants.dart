@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 class GlobalConstants{
   static const GLOBALFONTFAMILY = "Raleway";
   //static const SERVER_URL = "http://10.0.2.2/MVW_API/api/";
-  static const SERVER_ADDRESS = "192.168.0.117";
+  static const SERVER_ADDRESS = "localhost";
   static const SERVER_URL = "http://$SERVER_ADDRESS/MVW_API/api/";
   static const CHATSERVER_URL = "http://$SERVER_ADDRESS:10000/";
   static const WEBSOCKET_ADDRESS = "ws://$SERVER_ADDRESS:10000/";
