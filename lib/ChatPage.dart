@@ -1,12 +1,11 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:chat_bubbles/bubbles/bubble_special_three.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:myvirtualwallet/Models/ChatDetails.dart';
 import 'DatabaseLite/DatabaseHelper.dart';
 import 'myGlobals.dart' as myGlobals;
-
-import 'Services/OnlineServices.dart';
 import 'customWidgets.dart';
 
 final storage = FlutterSecureStorage();
@@ -59,7 +58,7 @@ class _MyPageState extends State<ChatPage>{
   Widget build(BuildContext context){
     return Scaffold(
       appBar: AppBar(
-        title: Text("Chat"),
+        title: Text("${widget.chatUsername}"),
       ),
       body: Stack(
         children: <Widget>[
@@ -82,14 +81,27 @@ class _MyPageState extends State<ChatPage>{
                         padding: EdgeInsets.only(left: 16,right: 16,top: 10,bottom: 10),
                         child: Align(
                           alignment: (messagesInStream.length == 0 || messagesInStream[index]!.Content!.ContentSender.toString() != _loggedInUsername ? Alignment.topLeft:Alignment.topRight),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: (messagesInStream.length == 0 || messagesInStream[index]!.Content!.ContentSender.toString() != _loggedInUsername ? Colors.green.shade200:Colors.blue[200]),
-                            ),
-                            padding: EdgeInsets.all(16),
-                            child: Text(messagesInStream.length == 0 ? "" : messagesInStream[index]!.Content!.ContentMessage.toString(), style: TextStyle(fontSize: 15),),
-                          ),
+                          child:
+                            (messagesInStream.length == 0 || messagesInStream[index]!.Content!.ContentSender.toString() != _loggedInUsername)
+                                ? BubbleSpecialThree(
+                                    text: messagesInStream.length == 0 ? "" : messagesInStream[index]!.Content!.ContentMessage.toString(),
+                                    color: Color(0xFF1B97F3),
+                                    tail: true,
+                                    textStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16
+                                    ),
+                                    isSender: false,
+                                  )
+                                : BubbleSpecialThree(
+                                    text: messagesInStream.length == 0 ? "" : messagesInStream[index]!.Content!.ContentMessage.toString(),
+                                    color: Colors.green,
+                                    tail: true,
+                                    textStyle: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16
+                                    ),
+                                  )
                         ),
                       );
                     }
